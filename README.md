@@ -35,3 +35,5 @@ event(
 - Create 2 Glue JDBC connecters, one for each database: `jdbc:<PROTOCOL>://<DATABASE_URL>:<PORT>/<DATABASE_NAME>`
 
 - Create 2 Glue Data crawlers to extract schema infromation and metadata for the data sources. The crawlers will create 6 tables in the Glue Catalog to represent the 6 tables from the data sources.
+
+![Cloud Architecture](https://user-images.githubusercontent.com/72892173/220223619-3c04c423-fc1b-4c47-bb11-f182b7367ed5.png)
