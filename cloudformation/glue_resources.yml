@@ -58,9 +58,9 @@ Resources:
                     SubnetId: !Ref SubnetConnection
                     SecurityGroupIdList: 
                       - !Ref SecurityGroupConnection
-                    AvailabilityZone: !Sub "us-east-1a"
+                    AvailabilityZone: !Sub "${AWS::Region}a"
                 ConnectionProperties: 
-                    JDBC_CONNECTION_URL: !Sub "jdbc:mysql://tickit_mysql.us-east-1.rds.amazonaws.com:3306/tickit"
+                    JDBC_CONNECTION_URL: !Sub "jdbc:mysql://tickit_mysql.${AWS::Region}.rds.amazonaws.com:3306/tickit"
                     JDBC_ENFORCE_SSL: "false"
                     PASSWORD: "bar"
                     USERNAME: "foo"
@@ -76,9 +76,9 @@ Resources:
                     SubnetId: !Ref SubnetConnection
                     SecurityGroupIdList: 
                       - !Ref SecurityGroupConnection
-                    AvailabilityZone: !Sub "us-east-1b"
+                    AvailabilityZone: !Sub "${AWS::Region}b"
                 ConnectionProperties: 
-                    JDBC_CONNECTION_URL: !Sub "jdbc:postgresql://tickit_postgresql.us-east-1.rds.amazonaws.com:5432/tickit"
+                    JDBC_CONNECTION_URL: !Sub "jdbc:postgresql://tickit_postgresql.${AWS::Region}.rds.amazonaws.com:5432/tickit"
                     JDBC_ENFORCE_SSL: "false"
                     PASSWORD: "bar"
                     USERNAME: "foo"
@@ -88,17 +88,17 @@ Resources:
     GlueJobCategoryRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_category_refine"
+            Name: "tickit_category_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_category_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_category_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -106,7 +106,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -121,17 +121,17 @@ Resources:
     GlueJobCategoryRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_category_raw"
+            Name: "tickit_category_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_category_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_category_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -139,7 +139,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -154,17 +154,17 @@ Resources:
     GlueJobDateRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_date_refine"
+            Name: "tickit_date_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_date_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_date_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -172,7 +172,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_mysql"
@@ -187,17 +187,17 @@ Resources:
     GlueJobDateRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_date_raw"
+            Name: "tickit_date_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_date_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_date_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -205,7 +205,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -220,17 +220,17 @@ Resources:
     GlueJobEventRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_event_refine"
+            Name: "tickit_event_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_event_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_event_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -238,7 +238,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -253,17 +253,17 @@ Resources:
     GlueJobEventRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_event_raw"
+            Name: "tickit_event_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_event_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_event_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -271,7 +271,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -286,17 +286,17 @@ Resources:
     GlueJobListingRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_listing_refine"
+            Name: "tickit_listing_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_listing_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_listing_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -304,7 +304,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_mysql"
@@ -319,17 +319,17 @@ Resources:
     GlueJobListingRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_listing_raw"
+            Name: "tickit_listing_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_listing_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_listing_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -337,7 +337,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             MaxRetries: 0
             AllocatedCapacity: 10
             Timeout: 2880
@@ -349,17 +349,17 @@ Resources:
     GlueJobSalesRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_sales_refine"
+            Name: "tickit_sales_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/Untitled job.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/Untitled job.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -367,7 +367,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_mysql"
@@ -382,17 +382,17 @@ Resources:
     GlueJobSalesRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_sales_raw"
+            Name: "tickit_sales_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_sales_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_sales_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -400,7 +400,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             MaxRetries: 0
             AllocatedCapacity: 10
             Timeout: 2880
@@ -412,17 +412,17 @@ Resources:
     GlueJobUsersRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_users_refine"
+            Name: "tickit_users_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_users_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_users_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -430,7 +430,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_mssql"
@@ -445,17 +445,17 @@ Resources:
     GlueJobUsersRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_users_raw"
+            Name: "tickit_users_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_users_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_users_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -463,7 +463,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -478,17 +478,17 @@ Resources:
     GlueJobVenueRefine:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_venue_refine"
+            Name: "tickit_venue_refine"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_venue_refine.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_venue_refine.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -496,7 +496,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -511,17 +511,17 @@ Resources:
     GlueJobVenueRaw:
         Type: "AWS::Glue::Job"
         Properties:
-            Name: "tickit_public_venue_raw"
+            Name: "tickit_venue_raw"
             Description: ""
-            Role: !Sub "arn:aws:iam::474552980369:role/service-role/AWSGlueServiceRole-tickit"
+            Role: !Sub "arn:aws:iam::${AccountId}:role/service-role/AWSGlueServiceRole-tickit"
             ExecutionProperty: 
                 MaxConcurrentRuns: 1
             Command: 
                 Name: "glueetl"
-                ScriptLocation: !Sub "s3://jasmine-tickit-system/scripts/tickit_public_venue_raw.py"
+                ScriptLocation: !Sub "s3://${DATABASE_NAME}/scripts/tickit_venue_raw.py"
                 PythonVersion: "3"
             DefaultArguments: 
-                --TempDir: !Sub "s3://jasmine-tickit-system/temporary/"
+                --TempDir: !Sub "s3://${DATABASE_NAME}/temporary/"
                 --class: "GlueApp"
                 --enable-continuous-cloudwatch-log: "true"
                 --enable-glue-datacatalog: "true"
@@ -529,7 +529,7 @@ Resources:
                 --enable-spark-ui: "true"
                 --job-bookmark-option: "job-bookmark-disable"
                 --job-language: "python"
-                --spark-event-logs-path: !Sub "s3://jasmine-tickit-system/sparkHistoryLogs/"
+                --spark-event-logs-path: !Sub "s3://${DATABASE_NAME}/sparkHistoryLogs/"
             Connections: 
                 Connections: 
                   - "tickit_postgresql"
@@ -544,4 +544,4 @@ Resources:
     S3Bucket:
         Type: "AWS::S3::Bucket"
         Properties:
-            BucketName: !Sub "jasmine-tickit-system"
+            BucketName: !Sub "${DATABASE_NAME}"
