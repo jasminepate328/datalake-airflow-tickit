@@ -32,8 +32,8 @@ with DAG(
 
     list_glue_tables = BashOperator(
         task_id='list_glue_tables',
-        bash_command="""aws glue get-tables --database-names tickit --query \
-            'TableList[].Name' --expression "source_*" --output table"""
+        bash_command="""aws glue get-tables --database-name tickit --query \
+            'TableList[].Name' --expression "*" --output table"""
     )
 
     for crawler in CRAWLERS:
